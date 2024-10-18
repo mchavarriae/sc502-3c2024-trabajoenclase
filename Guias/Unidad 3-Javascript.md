@@ -179,44 +179,7 @@ document.getElementById('result').innerText = result;
 3.  Calcula el promedio de las notas y muestra el resultado al final de la lista.
 
 
-``` javascript
-const estudiantes = [
 
-{ nombre: 'Juan', apellido: 'Pérez', nota: 90 },
-
-{ nombre: 'Ana', apellido: 'Gómez', nota: 85 },
-
-{ nombre: 'Luis', apellido: 'Martínez', nota: 78 }
-
-];
-
-  
-
-let resultado = '';
-
-let totalNotas = 0;
-
-  
-
-estudiantes.forEach((estudiante) => {
-
-resultado += `<p>${estudiante.nombre}  ${estudiante.apellido}</p>`;
-
-totalNotas += estudiante.nota;
-
-});
-
-  
-
-const promedio = totalNotas / estudiantes.length;
-
-resultado += `<p>Promedio de notas: ${promedio}</p>`;
-
-  
-
-document.getElementById('listaEstudiantes').innerHTML = resultado;
-
-  ```
 
 **Ejercicio 4: Cargar y mostrar JSON**
 
@@ -227,68 +190,3 @@ document.getElementById('listaEstudiantes').innerHTML = resultado;
 2.  Convierte ese JSON a un arreglo de objetos y muéstralo en una tabla en el HTML.
 
 3.  Permite que el usuario filtre los productos por categoría.
-
-
-
-```
-const productosJSON = `[
-
-{ "nombre": "Laptop", "categoria": "Electrónica", "precio": 1200 },
-
-{ "nombre": "Mesa", "categoria": "Muebles", "precio": 300 },
-
-{ "nombre": "Auriculares", "categoria": "Electrónica", "precio": 150 }
-
-]`;
-
-  
-
-const productos = JSON.parse(productosJSON);
-
-  
-
-function mostrarProductos(filtroCategoria = '') {
-
-let resultado = '<table><tr><th>Nombre</th><th>Categoría</th><th>Precio</th></tr>';
-
-productos.forEach((producto) => {
-
-if (filtroCategoria === '' || producto.categoria === filtroCategoria) {
-
-resultado += `<tr>
-
-<td>${producto.nombre}</td>
-
-<td>${producto.categoria}</td>
-
-<td>${producto.precio}</td>
-
-</tr>`;
-
-}
-
-});
-
-  
-
-resultado += '</table>';
-
-document.getElementById('listaProductos').innerHTML = resultado;
-
-}
-
-  
-
-mostrarProductos(); _// Mostrar todos los productos_
-
-  
-
-document.getElementById('filtrarCategoria').addEventListener('change', function() {
-
-mostrarProductos(this.value);
-
-});
-
-  ```
-
-

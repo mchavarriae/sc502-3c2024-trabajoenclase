@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo event listener</title>
+    <style>
+        #miboton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Eventos con addEventListener</h1>
+    <button id="miboton">Click me!</button>
+    <script>
+        document.getElementById("miboton").addEventListener("click", function(){
+            //creacion y manipulacion de arrays
+            let arr = [1, 1, 2, 3, 5, 8]; 
+            arr[6] = 13; 
+            arr.push(21); 
+            console.log(arr[7]);
+            console.log(arr.length);
+            //JSON Objects
+            let jsonVacio = {};
+            let persona = {
+                nombre: "Pablo",
+                apellido:"Fernandez",
+                estatura: 1.60,
+                edad: 18,
+                trabaja: true,
+                direccion: {
+                    provincia: "San Jose",
+                    canton: "Tibas",
+                    otrasSenas: ""
+                },
+                telefonos: [24468757,88997787]
+            };
+
+            console.log(persona.direccion.provincia);
+            persona.signoZodiacal = "Virgo";
+            console.log(persona.signoZodiacal);
+
+            alert("Hicieron click");
+        });
+
+        document.getElementById("miboton").addEventListener("mouseover", function(){
+            console.log('El rato esta encima');
+        });
+
+        //creamos un elemento
+        let selectElement = document.createElement("select");
+        selectElement.id = "miSelect";//le modificamos una propiedad
+        document.body.appendChild(selectElement);//lo agreamos al body
+
+        let option1 = document.createElement("option");
+        option1.value = 1;
+        option1.text = "Opcion 1";
+        selectElement.appendChild(option1);
+
+        let option2 = document.createElement("option");
+        option2.value = 2;
+        option2.text = "Opcion 2";
+        selectElement.appendChild(option2);
+
+
+    selectElement.addEventListener("change", function(){
+        // alert("Has cambiado la seleccion: " + this.value);
+        alert(`Has cambiado la seleccion: ${this.value}`);
+    })
+
+
+    </script>
+</body>
+</html>
