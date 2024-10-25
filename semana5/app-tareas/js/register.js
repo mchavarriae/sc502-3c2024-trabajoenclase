@@ -8,10 +8,11 @@ document.addEventListener('DOMContentLoaded', function(){
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
+        const errormsg = "Password and confirmation don't match";
 
         if(password !== confirmPassword){
             registerError.innerHTML = `<div class="alert alert-danger fade show" role="alert">
-            <strong>Error:</strong> Password and confirmation don't match
+            <strong>Error:</strong> ${errormsg}
             </div>`;
             return;
         }else  {

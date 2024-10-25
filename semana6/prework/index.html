@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Estudiantes</title>
+</head>
+<body>
+
+    <h1>Lista de Estudiantes</h1>
+    <ul id="studentList"></ul> <!-- Aquí se mostrará la lista -->
+
+    <script>
+        // Array con la lista de estudiantes
+        const estudiantes = ["Ana Pérez", "Carlos Sánchez", "María López", "Luis Rodríguez", "Sofía Ramírez"];
+
+        // Referencia al UL donde se va a mostrar la lista
+        const ul = document.getElementById('studentList');
+
+        // Recorriendo el array y agregando cada estudiante a la lista
+        estudiantes.forEach(estudiante => {
+            const li = document.createElement('li'); // Crear un elemento li
+            li.textContent = estudiante; // Asignar el nombre del estudiante al li
+            ul.appendChild(li); // Añadir el li al ul
+        });
+    </script>
+
+</body>
+</html>
