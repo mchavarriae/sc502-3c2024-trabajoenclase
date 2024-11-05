@@ -31,7 +31,27 @@
             <!-- Mostrar aqui los cards de las tareas -->
         </div>
     </div>
-
+    <div class="modal fade" id="commentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Comment task</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="comment-form">
+                        <input type="hidden" id="comment-task-id">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="task-comment" required> 
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Save Comment</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true" >
         <div class="modal-dialog">
             <div class="modal-content">
