@@ -76,5 +76,3 @@ agregarAlCarrito(5,1);
 echo PHP_EOL;
 echo "El total de su carrito es ". calcularTotalCarrito();
 
-
-
