@@ -1,6 +1,5 @@
 <?php
 // tasks.php
-
 require 'db.php';
 
 // Crear una tarea
