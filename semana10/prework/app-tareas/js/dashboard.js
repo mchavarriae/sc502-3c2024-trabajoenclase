@@ -1,35 +1,35 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    const API_URL = 'http://localhost:8000/semana10/prework/app-tareas/backend/tasks.php';
+
     let isEditMode = false;
     let edittingId;
-    const tasks = [{
-        id: 1,
-        title: "Complete project report",
-        description: "Prepare and submit the project report",
-        dueDate: "2024-12-01",
-        comments: [{ id: 1, description: "There is too many tasks pending" }, { id: 2, description: "It needs to be a complete report" }]
-    },
-    {
-        id: 2,
-        title: "Team Meeting",
-        description: "Get ready for the season",
-        dueDate: "2024-12-01",
-    },
-    {
-        id: 3,
-        title: "Code Review",
-        description: "Check partners code",
-        dueDate: "2024-12-01",
+    let tasks = []
+    
 
-    },
-    {
-        id: 4,
-        title: "Deploy",
-        description: "Check deploy steps",
-        dueDate: "2024-12-01",
-    }];
+    async function loadTasks() {
+        try {
+            const response = await fetch(API_URL, {
+                method: 'GET',
+                credentials: 'include' // Para enviar las cookies de sesión
+            });
+            if (response.ok) {
+                tasks = await response.json();
+                renderTasks(tasks);
+            } else {
+                if(response.status === 401){
+                    //enviar al usuario a login si no hay sesion
+                    window.location.href = "index.html";
+                }
+                console.error("Error al obtener las tareas");
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+        }
+    }
+    
 
-    function loadTasks() {
+    function renderTasks(tasks) {
         const taskList = document.getElementById('task-list');
         taskList.innerHTML = '';
         tasks.forEach(function (task) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="card-body">
                     <h5 class="card-title">${task.title}</h5>
                     <p class="card-text">${task.description}</p>
-                    <p class="card-text"><small class="text-muted">Due: ${task.dueDate}</small> </p>
+                    <p class="card-text"><small class="text-muted">Due: ${task.due_date}</small> </p>
                     ${commentsList}
                      <button type="button" class="btn btn-sm btn-link add-comment"  data-id="${task.id}">Add Comment</button>
 
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //cargar los datos en el formulario 
             document.getElementById('task-title').value = task.title;
             document.getElementById('task-desc').value = task.description;
-            document.getElementById('due-date').value = task.dueDate;
+            document.getElementById('due-date').value = task.due_date;
             //ponerlo en modo edicion
             isEditMode = true;
             edittingId = taskId;
@@ -119,13 +119,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function handleDeleteTask(event) {
-        // alert(event.target.dataset.id);
+    async function handleDeleteTask(event) {
         const id = parseInt(event.target.dataset.id);
-        const index = tasks.findIndex(t => t.id === id);
-        tasks.splice(index, 1);
-        loadTasks();
+        
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                loadTasks(); // Recargar las tareas después de eliminar una
+            } else {
+                if(response.status === 401){
+                    //enviar al usuario a login si no hay sesion
+                    window.location.href = "index.html";
+                }
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+        }
     }
+    
 
     document.getElementById('comment-form').addEventListener('submit', function (e){
         e.preventDefault();
@@ -149,31 +164,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     })
 
-    document.getElementById('task-form').addEventListener('submit', function (e) {
+    document.getElementById('task-form').addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const title = document.getElementById("task-title").value;
         const description = document.getElementById("task-desc").value;
         const dueDate = document.getElementById("due-date").value;
 
-        if (isEditMode) {
-            //todo editar
-            const task = tasks.find(t => t.id === edittingId);
-            task.title = title;
-            task.description = description;
-            task.dueDate = dueDate;
-        } else {
-            const newTask = {
-                id: tasks.length + 1,
-                title: title,
-                description: description,
-                dueDate: dueDate
-            };
-            tasks.push(newTask);
+        try {
+            const method = isEditMode ? 'PUT' : 'POST';
+            const url = isEditMode ? `${API_URL}/${edittingId}` : API_URL;
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    due_date: dueDate
+                }),
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
+                modal.hide();
+                loadTasks();
+            } else {
+                console.error("Error al guardar la tarea");
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
         }
-        const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
-        modal.hide();
-        loadTasks();
     });
 
     document.getElementById('commentModal').addEventListener('show.bs.modal', function(){

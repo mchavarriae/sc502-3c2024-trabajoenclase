@@ -8,4 +8,4 @@ session_destroy();
 
 logDebug("Usuario cerro sesion");
 
-// header('Location: /index.html');
+header('Location: /semana10/prework/app-tareas/');
