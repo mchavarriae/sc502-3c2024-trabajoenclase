@@ -90,7 +90,6 @@ function eliminarTarea($id)
 
 session_start();
 header("Content-Type: application/json");
-
 // Función para obtener el cuerpo de la solicitud en JSON
 function getJsonInput()
 {
@@ -99,17 +98,7 @@ function getJsonInput()
 
 // Verifica el método HTTP
 $method = $_SERVER['REQUEST_METHOD'];
-//Obtiene lo que hay en el path
-$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-// Ajusta los índices según la estructura de tu URL
-$resource = $path[4] ?? null;
-$id = $path[5] ?? null;
-// Verifica que el recurso solicitado sea `tasks`
-if (!str_contains($resource, 'tasks')) {
-    http_response_code(404);
-    echo json_encode(["error" => "Recurso no encontrado"]);
-    exit;
-}
+
 //verifica que exista una sesion y extrae el user id
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -117,16 +106,7 @@ if (isset($_SESSION['user_id'])) {
     
     switch ($method) {
         case 'GET':
-            if ($id) {
-                // Obtener una tarea por ID
-                $tarea = obtenerTareaPorId($id);
-                if ($tarea) {
-                    echo json_encode($tarea);
-                } else {
-                    http_response_code(404);
-                    echo json_encode(["error" => "Tarea no encontrada"]);
-                }
-            } else {
+            
                 // Obtener todas las tareas del usuario conectado
                 if ($user_id) {
                     $tareas = obtenerTareasPorUsuario($user_id);
@@ -135,7 +115,7 @@ if (isset($_SESSION['user_id'])) {
                     http_response_code(response_code: 400);
                     echo json_encode(["error" => "Se requiere el parámetro user_id"]);
                 }
-            }
+            
             break;
 
         case 'POST':
