@@ -15,3 +15,19 @@ if ($editado) {
 } else {
     echo "Error al editar la tarea.\n";
 }
+
+echo "Lista de tareas" . PHP_EOL;
+$tareas =  obtenerTareasPorUsuario(1);
+if($tareas){
+    foreach($tareas as $tarea){
+        echo "ID: " . $tarea["id"] . " Titulo: " . $tarea["title"] . PHP_EOL;
+    }
+}
+
+echo "Eliminando una tarea: ". $idTarea . PHP_EOL;
+$eliminado = eliminarTarea($idTarea);
+if($eliminado){
+    echo "La tarea se elimino exitosamente";
+}else{
+    echo "Error al eliminar la tarea";
+}

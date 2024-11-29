@@ -45,5 +45,29 @@ function editarTarea($id, $title, $description, $due_date)
 
 
 //obtenerTareasPorUsuario
+function obtenerTareasPorUsuario($user_id){
+    global $pdo;
+    try {
+        $sql = "Select * from tasks where user_id = :user_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['user_id' => $user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        logError("Error al obtener tareas: " . $e->getMessage() );
+        return [];
+    }
+}
 
 //Eliminar una tarea por id
+function eliminarTarea($id){
+    global $pdo;
+    try {
+        $sql = "delete from tasks where id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() > 0;// true si se elimina algo
+    } catch (Exception $e) {
+        logError("Error al eliminar la tareas: " . $e->getMessage() );
+        return false;
+    }
+}
