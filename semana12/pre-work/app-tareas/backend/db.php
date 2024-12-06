@@ -1,10 +1,12 @@
 <?php
 require "message_log.php";
 
-$host = 'localhost';
-$dbname = 'todo_app';
-$user = 'dbuser';
-$password = 'mysqlpass';
+$host = getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost';
+$dbname = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'todo_app';
+$user = getenv('DB_USER') !== false ? getenv('DB_USER') : 'dbuser';
+$password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : 'mysqlpass';
+
+logDebug($host."-".$dbname."-".$user."-".$password);
 
 try{
 

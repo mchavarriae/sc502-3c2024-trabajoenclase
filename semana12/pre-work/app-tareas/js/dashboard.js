@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let isEditMode = false;
     let edittingId;
     let tasks = [];
-    const API_URL = 'http://localhost:8000/semana11/app-tareas/backend/tasks.php';
+    const API_URL = 'backend/tasks.php';
 
     async function loadTasks(){
         //va al servidor por las tareas
