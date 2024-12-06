@@ -5,27 +5,27 @@ document.addEventListener('DOMContentLoaded', function () {
     let tasks = [];
     const API_URL = 'backend/tasks.php';
 
-    async function loadTasks(){
+    async function loadTasks() {
         //va al servidor por las tareas
-        try{
-            const response = await fetch(API_URL,{
+        try {
+            const response = await fetch(API_URL, {
                 method: 'GET',
                 credentials: 'include'
             });
-            if(response.ok){
+            if (response.ok) {
                 tasks = await response.json();
                 renderTasks(tasks);
-            }else{
-                if(response.status == 401){
+            } else {
+                if (response.status == 401) {
                     window.location.href = 'index.html';
                 }
                 console.error("Error al obtener tareas");
             }
-        }catch(err){
+        } catch (err) {
             console.error(err);
         }
     }
-    
+
     function renderTasks(tasks) {
         //traer las tareas desde el backend
         const taskList = document.getElementById('task-list');
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     commentsList += `<li class="list-group-item">${comment.description} 
                     <button type="button" class="btn btn-sm btn-link remove-comment" data-visitid="${task.id}" data-commentid="${comment.id}">Remove</button>
                     </li>`;
-                }); 
+                });
                 commentsList += '</ul>';
             }
             const taskCard = document.createElement('div');
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="card-body">
                     <h5 class="card-title">${task.title}</h5>
                     <p class="card-text">${task.description}</p>
-                    <p class="card-text"><small class="text-muted">Due: ${task.dueDate}</small> </p>
+                    <p class="card-text"><small class="text-muted">Due: ${task.due_date}</small> </p>
                     ${commentsList}
                      <button type="button" class="btn btn-sm btn-link add-comment"  data-id="${task.id}">Add Comment</button>
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // alert(e.target.dataset.id);
                 document.getElementById("comment-task-id").value = e.target.dataset.id;
                 const modal = new bootstrap.Modal(document.getElementById("commentModal"));
-            modal.show()
+                modal.show()
 
             })
         });
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 let commentId = parseInt(e.target.dataset.commentid);
                 selectedTask = tasks.find(t => t.id === taskId);
                 commentIndex = selectedTask.comments.findIndex(c => c.id === commentId);
-                selectedTask.comments.splice(commentIndex,1);
+                selectedTask.comments.splice(commentIndex, 1);
                 loadTasks();
             })
         });
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //cargar los datos en el formulario 
             document.getElementById('task-title').value = task.title;
             document.getElementById('task-desc').value = task.description;
-            document.getElementById('due-date').value = task.dueDate;
+            document.getElementById('due-date').value = task.due_date;
             //ponerlo en modo edicion
             isEditMode = true;
             edittingId = taskId;
@@ -117,37 +117,42 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function handleDeleteTask(event) {
-        // alert(event.target.dataset.id);
+    async function handleDeleteTask(event) {
         const id = parseInt(event.target.dataset.id);
-        const index = tasks.findIndex(t => t.id === id);
-        tasks.splice(index, 1);
-        loadTasks();
+        const response = await fetch(`${API_URL}?id=${id}`,{
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (response.ok) {
+            loadTasks();
+        } else {
+            console.error("Error eliminando las tareas");
+        }
     }
 
-    document.getElementById('comment-form').addEventListener('submit', function (e){
+    document.getElementById('comment-form').addEventListener('submit', function (e) {
         e.preventDefault();
         const comment = document.getElementById('task-comment').value;
         const selectedTask = parseInt(document.getElementById('comment-task-id').value);
-        const task = tasks.find(t=> t.id === selectedTask);
+        const task = tasks.find(t => t.id === selectedTask);
 
 
         let nextCommentId = 1;
-         
-        if(task.comments){
+
+        if (task.comments) {
             nextCommentId = task.comments.length + 1;
-        }else{
+        } else {
             task.comments = [];
         }
-        
-        task.comments.push({id: nextCommentId, description: comment});
+
+        task.comments.push({ id: nextCommentId, description: comment });
         const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
         modal.hide();
         loadTasks();
 
     })
 
-    document.getElementById('task-form').addEventListener('submit', function (e) {
+    document.getElementById('task-form').addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const title = document.getElementById("task-title").value;
@@ -155,26 +160,44 @@ document.addEventListener('DOMContentLoaded', function () {
         const dueDate = document.getElementById("due-date").value;
 
         if (isEditMode) {
-            //todo editar
-            const task = tasks.find(t => t.id === edittingId);
-            task.title = title;
-            task.description = description;
-            task.dueDate = dueDate;
+            //editar
+            const response = await fetch(`${API_URL}?id=${edittingId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: title, description: description, due_date: dueDate }),
+                credentials: "include"
+            });
+            if (!response.ok) {
+                console.error("Sucedio un error");
+            }
+
         } else {
             const newTask = {
-                id: tasks.length + 1,
                 title: title,
                 description: description,
-                dueDate: dueDate
+                due_date: dueDate
             };
-            tasks.push(newTask);
+            //enviar la tarea al backend
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newTask),
+                credentials: "include"
+            });
+            if (!response.ok) {
+                console.error("Sucedio un error");
+            }
         }
         const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
         modal.hide();
         loadTasks();
     });
 
-    document.getElementById('commentModal').addEventListener('show.bs.modal', function(){
+    document.getElementById('commentModal').addEventListener('show.bs.modal', function () {
         document.getElementById('comment-form').reset();
     })
 
