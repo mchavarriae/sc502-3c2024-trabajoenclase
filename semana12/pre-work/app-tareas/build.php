@@ -45,8 +45,6 @@ function copyBackend($source, $destination) {
     echo "Backend copied \n";
     return true;
 }
-
-
 function minifyHtmlFiles($inputDirectory, $outputDirectory)
 {
     $htmlMin = new HtmlMin();
@@ -89,34 +87,7 @@ function miniyCss()
     echo '* CSS minified' . PHP_EOL;
 }
 
-function minifyJsFiles($inputFolder, $outputFolder) {
-    $processedCount = 0;
-
-    // Scan the input folder for all JavaScript files
-    $jsFiles = glob($inputFolder . '/*.js');
-
-    foreach ($jsFiles as $file) {
-        // Read the content of each JavaScript file
-        $fileContent = file_get_contents($file);
-
-        // Minify the content
-        $jsMinifier = new Minify\JS();
-        $jsMinifier->add($fileContent);
-        $minifiedContent = $jsMinifier->minify();
-
-        // Determine the output file path
-        $outputFile = $outputFolder . '/' . basename($file);
-
-        // Write the minified content to the output file
-        if (file_put_contents($outputFile, $minifiedContent)) {
-            $processedCount++;
-        } else {
-            echo "Failed to write minified file: $outputFile\n";
-        }
-    }
-
-    echo "* ". $processedCount. " JavaScript files have been processed.\n";
-}
+__
 
 
 //Create required files:
